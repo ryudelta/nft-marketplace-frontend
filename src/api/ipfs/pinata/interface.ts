@@ -16,3 +16,11 @@ export interface PinataPinningJSON {
     Timestamp: string,
     isDuplicate: boolean
 }
+
+export interface listItems {
+    Row: [any]
+}
+
+export interface Items {
+
+}
