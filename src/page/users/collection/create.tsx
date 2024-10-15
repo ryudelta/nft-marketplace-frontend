@@ -4,15 +4,18 @@ import { Collections, mintSettings } from '../../../hooks/collection/interface';
 import { DateToIntTime, IntTimeToDate } from '../../../tools/date';
 
 const CollectionCreatorPage: React.FC = () => {
+  const [typeCol, setTypeCol] = useState<string>("LaunchpadMinting");
+  const [launch, setLaunch] = useState<boolean>(false);
+  const [self, setSelf] = useState<boolean>(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null); 
   const [formData, setFormData] = useState<Collections>({
     ImageUrl: '',
     CollectionType: mintSettings.SelfMint,
     ContractName: '',
     ContractSymbol: '',
-    EndDate: Date.now(),
-    NftType: '',
-    StartDate: Date.now()
+    EndDate: null,
+    NftType: null,
+    StartDate: null
   });
 
 
@@ -37,7 +40,19 @@ const CollectionCreatorPage: React.FC = () => {
     }
   };
 
+  const handleFormTypeCol = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const {name, value} = e.target
+    if (value == "LaunchpadMinting") {
+      setLaunch(true)
+      setSelf(false)
+    }else if (value == "SelfMinting") {
+      setLaunch(false)
+      setSelf(true) 
+    }
 
+    setFormData({ ...formData, [name]: value });
+  }
+  
   const handleRemoveImage = () => {
     setFormData({ ...formData, ImageUrl: null });
     setImagePreview(null);
@@ -75,67 +90,75 @@ const CollectionCreatorPage: React.FC = () => {
           </Col>
           <Col xs={12} md={6}>
             <Form.Group controlId="CollectionType" className="mb-3">
-            <Form.Label>Collection Type</Form.Label>
-            <Form.Select
-              name="CollectionType"
-              value={formData.CollectionType}
-              onChange={handleInputChange}
-            >
-              <option value="LaunchpadMinting">Launchpad Minting</option>
-              <option value="SelfMinting">Self Minting</option>
-            </Form.Select>
-          </Form.Group>
+              <Form.Label>Collection Type</Form.Label>
+              <Form.Select
+                name="CollectionType"
+                value={formData.CollectionType}
+                onChange={handleFormTypeCol}
+              >
+                <option value="LaunchpadMinting">Launchpad Minting</option>
+                <option value="SelfMinting">Self Minting</option>
+              </Form.Select>
+            </Form.Group>
 
-          <Form.Group controlId="ContractName" className="mb-3">
-            <Form.Label>Contract Name</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter contract name"
-              name="ContractName"
-              value={formData.ContractName}
-              onChange={handleInputChange}
-            />
-          </Form.Group>
-          <Form.Group controlId="contractSymbol" className="mb-3">
-            <Form.Label>Contract Name</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter contract symbol"
-              name="ContractSymbol"
-              value={formData.ContractSymbol}
-              onChange={handleInputChange}
-            />
-          </Form.Group>
-          <Form.Group controlId="nftType" className="mb-3">
-            <Form.Label>Collection Type</Form.Label>
-            <Form.Select
-              name="NftType"
-              value={formData.NftType}
-              onChange={handleInputChange}
-            >
-              <option value="">Select Type</option>
-              <option value="dynamic">Dynamic</option>
-              <option value="fixed">Fixed</option>
-            </Form.Select>
-          </Form.Group>
-          <Form.Group controlId="startDate" className="mb-3">
-            <Form.Label>Start Mint Date</Form.Label>
-            <Form.Control
-              type="date"
-              name="startDate"
-              value={formData.StartDate !== null ? IntTimeToDate(formData.StartDate).toISOString().split('T')[0] : ''}
-              onChange={handleInputChange}
-            />
-          </Form.Group>
-          <Form.Group controlId="endDate" className="mb-3">
-            <Form.Label>End Mint Date</Form.Label>
-            <Form.Control
-              type="date"
-              name="endDate"
-              value={formData.EndDate !== null ? IntTimeToDate(formData.EndDate).toISOString().split('T')[0] : ''}
-              onChange={handleInputChange}
-            />
-          </Form.Group></Col>
+            <Form.Group controlId="ContractName" className="mb-3">
+              <Form.Label>Contract Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter contract name"
+                name="ContractName"
+                value={formData.ContractName}
+                onChange={handleInputChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="contractSymbol" className="mb-3">
+              <Form.Label>Contract Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter contract symbol"
+                name="ContractSymbol"
+                value={formData.ContractSymbol}
+                onChange={handleInputChange}
+              />
+            </Form.Group>
+            { launch && (
+              <>
+              <Form.Group controlId="nftType" className="mb-3">
+                <Form.Label>Collection Type</Form.Label>
+                  <Form.Select
+                    name="NftType"
+                    value={formData.NftType === null ? '' : formData.NftType}
+                    onChange={handleInputChange}
+                    disabled={!launch}
+                  >
+                    <option value="">Select Type</option>
+                    <option value="dynamic">Dynamic</option>
+                    <option value="fixed">Fixed</option>
+                  </Form.Select>
+                </Form.Group>
+                <Form.Group controlId="startDate" className="mb-3">
+                  <Form.Label>Start Mint Date</Form.Label>
+                  <Form.Control
+                    type="date"
+                    name="startDate"
+                    value={formData.StartDate !== null ? IntTimeToDate(formData.StartDate).toISOString().split('T')[0] : ''}
+                    onChange={handleInputChange}
+                    disabled={!launch}
+                  />
+                </Form.Group>
+                <Form.Group controlId="endDate" className="mb-3">
+                  <Form.Label>End Mint Date</Form.Label>
+                  <Form.Control
+                    type="date"
+                    name="endDate"
+                    value={formData.EndDate !== null ? IntTimeToDate(formData.EndDate).toISOString().split('T')[0] : ''}
+                    onChange={handleInputChange}
+                    disabled={!launch}
+                  />
+                </Form.Group>
+              </>
+            ) }
+          </Col>
         </Row>
 
         <Button variant="primary" type="submit">

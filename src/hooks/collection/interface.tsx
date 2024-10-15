@@ -3,9 +3,9 @@ export interface Collections {
     CollectionType: string;
     ContractName: string;
     ContractSymbol: string;
-    NftType: string;
-    StartDate: number;
-    EndDate: number;
+    NftType: string | null;
+    StartDate: number | null;
+    EndDate: number | null;
 }
 
 export interface MintOptions {

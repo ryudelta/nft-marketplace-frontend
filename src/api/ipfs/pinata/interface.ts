@@ -1,6 +1,6 @@
 export interface PinataHeader {
-    pinata_api_key: string,
-    pinata_secret_key: string
+    pinata_api_key: string | undefined,
+    pinata_secret_key: string | undefined
 }
 
 export interface PinataPinningFile {
@@ -19,8 +19,4 @@ export interface PinataPinningJSON {
 
 export interface listItems {
     Row: [any]
-}
-
-export interface Items {
-
 }
