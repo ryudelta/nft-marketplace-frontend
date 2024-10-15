@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, Col, Container, Form, Image, Row } from 'react-bootstrap';
 import { Collections, mintSettings } from '../../../hooks/collection/interface';
 import { DateToIntTime, IntTimeToDate } from '../../../tools/date';
+import { pinataIpfs } from '../../../api/ipfs/pinata/pinata';
 
 const CollectionCreatorPage: React.FC = () => {
   const [typeCol, setTypeCol] = useState<string>("LaunchpadMinting");
@@ -17,7 +18,6 @@ const CollectionCreatorPage: React.FC = () => {
     NftType: null,
     StartDate: null
   });
-
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -58,7 +58,24 @@ const CollectionCreatorPage: React.FC = () => {
     setImagePreview(null);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleIpfsUpload = async (): Promise<string> => {
+    const data = new FormData()
+    if (formData.ImageUrl) {
+      data.append("file", formData.ImageUrl)
+    }
+
+    try {
+      const upload = await pinataIpfs.pinFiles(data);
+      console.log(upload);
+      return ''
+    } catch (error) {
+      console.log(`errored`, error)
+      return ''
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    const ipfsUrl = await handleIpfsUpload()
     e.preventDefault();
     console.log('Form Submitted:', formData);
   };

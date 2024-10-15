@@ -3,23 +3,25 @@ import { requestBuilder } from "../../action"
 import { PinataPinningFile, PinataPinningJSON } from "./interface"
 
 const config: AxiosRequestConfig = {
-    baseURL: process.env.PINATA_BASE_URL,
-    headers: {
-        pinata_api_key: process.env.PINATA_API_KEY,
-        pinata_secret_key: process.env.PINATA_SECRET_KEY
-    }
+    
 }
 
 const pinataIpfs = {
     pinFiles: async(data: any): Promise<PinataPinningFile> => {
-        try {
-            const request = await requestBuilder.post('/pinning/pinFileToIPFS', data, config);
-            const response: PinataPinningFile = request.data;
+        // try {
+        //     console.log(config);
+            
+            
+        // } catch (error) {
+        //     console.log(error);
+        //     throw error
+        // }
+        const request = await requestBuilder.post('/pinning/pinFileToIPFS', data, config);
+        const response: PinataPinningFile = request.data;
 
-            return response;
-        } catch (error) {
-            throw error
-        }
+        console.log(`response pinata`, response);
+        
+        return response;
     },
     pinJSON: async(data: Record<string, any>): Promise<PinataPinningJSON> => {
         try {

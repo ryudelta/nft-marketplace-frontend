@@ -1,7 +1,12 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-    timeout: 5000,  
+    baseURL: "https://api.pinata.cloud",
+    headers: {
+        "pinata_api_key": "44d96723f9d3f83158e6",
+        "pinata_secret_key": "51a3f7459f120070d10997d0be1051a09a353ffaed6872ee11626535850768cb"
+    },
+    timeout: 5000,
 })
 
 axiosInstance.interceptors.request.use(
