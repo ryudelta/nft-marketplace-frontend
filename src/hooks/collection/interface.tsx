@@ -17,3 +17,10 @@ export const mintSettings: MintOptions = {
     SelfMint: 'SelfMinting',
     LaunchpadMint: 'LaunchpadMinting'
 };
+
+export interface CFTCollection {
+    symbol: string;
+    name: string;
+    initialOwner: string;
+    newUri: string;
+}
