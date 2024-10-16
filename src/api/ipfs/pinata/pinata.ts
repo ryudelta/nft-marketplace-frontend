@@ -1,31 +1,30 @@
-import { AxiosRequestConfig } from "axios";
+import { AxiosHeaders, AxiosHeaderValue, AxiosRequestConfig, AxiosRequestHeaders } from "axios";
 import { requestBuilder } from "../../action"
 import { PinataPinningFile, PinataPinningJSON } from "./interface"
-
-const config: AxiosRequestConfig = {
-    
-}
+import { axiosInstance } from "../../config";
 
 const pinataIpfs = {
     pinFiles: async(data: any): Promise<PinataPinningFile> => {
-        // try {
-        //     console.log(config);
-            
-            
-        // } catch (error) {
-        //     console.log(error);
-        //     throw error
-        // }
-        const request = await requestBuilder.post('/pinning/pinFileToIPFS', data, config);
-        const response: PinataPinningFile = request.data;
-
-        console.log(`response pinata`, response);
+        const headerConfig = {
+            'Content-Type': 'multipart/form-data',
+            pinata_api_key: '44d96723f9d3f83158e6',
+            pinata_secret_api_key: '51a3f7459f120070d10997d0be1051a09a353ffaed6872ee11626535850768cb',
+        }
+        try {
+            const request: any = await axiosInstance.post('pinning/pinFileToIPFS', data, {
+                headers: headerConfig
+            });
         
-        return response;
+            const response: PinataPinningFile = request.data;
+
+            return response;
+        } catch (error: any) {
+            return error
+        }
     },
     pinJSON: async(data: Record<string, any>): Promise<PinataPinningJSON> => {
         try {
-            const request = await requestBuilder.post('/pinning/pinJSONToIPFS', data, config);
+            const request = await requestBuilder.post('pinning/pinJSONToIPFS', data,);
             const respose: PinataPinningJSON = request.data;
             return respose;
         } catch (error) {
@@ -34,7 +33,7 @@ const pinataIpfs = {
     },
     listFile: async(): Promise<any> => {
         try {
-            const request = await requestBuilder.get('data/pinList', config)
+            const request = await requestBuilder.get('data/pinList',)
             return request
         } catch (error) {
             throw error
@@ -42,7 +41,7 @@ const pinataIpfs = {
     },
     deletePin: async(cid: string): Promise<any> => {
         try {
-            const response = await requestBuilder.delete(`/pinning/unpin/${cid}`,config)
+            const response = await requestBuilder.delete(`pinning/unpin/${cid}`)
             return response
         } catch (error) {
             throw error

@@ -1,36 +1,31 @@
 import axios from "axios";
 
+const base_url = import.meta.env?.VITE_PINATA_BASE_URL
+
 const axiosInstance = axios.create({
-    baseURL: "https://api.pinata.cloud",
-    headers: {
-        "pinata_api_key": "44d96723f9d3f83158e6",
-        "pinata_secret_key": "51a3f7459f120070d10997d0be1051a09a353ffaed6872ee11626535850768cb"
-    },
-    timeout: 5000,
+    baseURL: `${base_url}`,
 })
 
-axiosInstance.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem(`token`)
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`
-        }
-
-        return config
-    },
-    (error) => {
-        console.log('error request :>> ', error);
-        return Promise.reject(error)
-    }
-)
+axiosInstance.interceptors.request.use((config) => {
+    return config;
+});
 
 axiosInstance.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        return response;
+    },
     (error) => {
-        console.error('Response Error:', error.response?.data || error.message);
+        if (error.code === 'ECONNABORTED') {
+            console.error('Retrying request...');
+            return axiosInstance.request(error.config);
+          }
+        console.error('Error message:', error.message);
+        console.error('Error config:', JSON.stringify(error.config) );
+        console.error('Error code:', error.code);
+        console.error('Error response:', error.response);
         return Promise.reject(error);
     }
-)
+);
 
 export {
     axiosInstance
