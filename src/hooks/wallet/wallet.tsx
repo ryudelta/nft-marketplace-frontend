@@ -1,16 +1,15 @@
-// src/wallet/walletConnector.ts
 import { ethers } from 'ethers';
 import { WalletConnection } from './interface';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const message = `Sign this message to verify your identity: ${new Date().toISOString()}`;
 
-const useWallet = async () => {
+const useWallet = () => {
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [signedMessage, setSignedMessage] = useState<string>('');
   const [signature, setSignature] = useState<string | null>(null);
 
-  const connectWallet = async (): Promise<WalletConnection> => {
+  const connectWallet = useCallback(async (): Promise<WalletConnection> => {
     if (typeof window !== 'undefined' && window.ethereum) {
       try {
         await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -26,6 +25,7 @@ const useWallet = async () => {
         setSignedMessage(message);
         setSignature(signature);
 
+        localStorage.setItem('walletAddress', address);
         return { address, message, signature };
       } catch (error) {
         console.error('Error connecting to wallet:', error);
@@ -36,7 +36,32 @@ const useWallet = async () => {
       window.open('https://metamask.io/download.html', '_blank');
       return { address: null, message: '', signature: null };
     }
-  }
+  }, [])
+
+  const disconnectWallet = useCallback(() => {
+    setWalletAddress(null);
+    setSignedMessage('');
+    setSignature(null);
+    localStorage.removeItem('walletAddress');
+  }, []);
+
+  useEffect(() => {
+    const checkWalletConnection = async () => {
+      if (typeof window !== 'undefined' && window.ethereum) {
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const accounts = await provider.listAccounts();
+        if (accounts.length > 0) {
+          const address = accounts[0].address;
+          setWalletAddress(address);
+        }else{
+          disconnectWallet();
+        }
+      }
+    };
+
+    checkWalletConnection();
+  }, []);
+
   return { walletAddress, signedMessage, signature, connectWallet };
 }
 export default useWallet;
