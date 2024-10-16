@@ -7,6 +7,8 @@ import useWallet from '../../hooks/wallet/wallet';
 const MyNavbar: React.FC = () => {
   const walletConfig = useWallet();
 
+  let { walletAddress } = useWallet();
+
   const [expanded, setExpanded] = useState(false);
   const [wallet, setWallet] = useState<WalletConnection>({address: null, message: '', signature: ''});
   const [showAlert, setShowAlert] = useState(false);
@@ -47,9 +49,9 @@ const MyNavbar: React.FC = () => {
               Profile
             </Nav.Link>
           </Nav>
-          {wallet.address != null ? (
+          {walletAddress != null ? (
             <Button variant="secondary" disabled>
-              {wallet.address?.slice(0, 6)}...{wallet.address?.slice(-4)}
+              {walletAddress?.slice(0, 6)}...{walletAddress?.slice(-4)}
             </Button>
           ) : (
             <Button variant="primary" onClick={handleConnectWallet}>
