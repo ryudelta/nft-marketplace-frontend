@@ -5,7 +5,9 @@ import { DateToIntTime, IntTimeToDate } from '../../../tools/date';
 import { pinataIpfs } from '../../../api/ipfs/pinata/pinata';
 import { contracts } from '../../../hooks/collection/contract';
 import useWallet from '../../../hooks/wallet/wallet';
-import { WalletConnection } from '../../../hooks/wallet/interface';
+import { collectionFile } from '../../../hooks/collection/file';
+import AlertModal from '../../../component/modal/modal';
+import { initBrowserFS } from '../../../tools/generate-json';
 
 const CollectionCreatorPage: React.FC = () => {
   const { walletAddress, signedMessage, connectWallet } = useWallet();
@@ -15,6 +17,10 @@ const CollectionCreatorPage: React.FC = () => {
   const [self, setSelf] = useState<boolean>(false);
   const [image, setImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null); 
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState("")
+  const [modalMessage, setModalMessage] = useState("")
+
   const [formData, setFormData] = useState<Collections>({
     ImageUrl: '',
     CollectionType: mintSettings.SelfMint,
@@ -67,22 +73,42 @@ const CollectionCreatorPage: React.FC = () => {
   };
 
   const handleIpfsUpload = async (): Promise<any> => {
+    setModalTitle('Uploading...');
+    setModalMessage('Uploading image to IPFS...');
+    setModalVisible(true);
     const data = new FormData()
     if (image) {
       data.append("file", image)
     }
 
-    const request = await pinataIpfs.pinFiles(data)
-    return request.IpfsHash
+    try {
+      const request = await pinataIpfs.pinFiles(data)
+      return request.IpfsHash
+    } catch (error) {
+      setModalTitle('Upload Error');
+      setModalMessage('Failed to upload image to IPFS.');
+      setModalVisible(true);
+      throw error;
+    } finally {
+      setModalVisible(false);
+    }
   }
 
   const handleIpfsHash = async(hash: string): Promise<any> => {
     formData.ImageUrl = `https://gateway.pinata.cloud/ipfs/${hash}`
+    setModalTitle('Uploading...');
+    setModalMessage('Uploading JSON metadata...');
+    setModalVisible(true);
     try {
       const response = await pinataIpfs.pinJSON(formData)
       return response.IpfsHash
     } catch (error) {
+      setModalTitle('JSON Upload Error');
+      setModalMessage('Failed to upload JSON metadata.');
+      setModalVisible(true);
       throw error;
+    } finally {
+      setModalVisible(false); // Hide modal after process
     }
   }
 
@@ -92,9 +118,39 @@ const CollectionCreatorPage: React.FC = () => {
       name: formData.ContractName,
       initialOwner: '',
       newUri: `https://gateway.pinata.cloud/ipfs/${hash}`
+    };
+
+    setModalTitle('Deploying...');
+    setModalMessage('Deploying the contract...');
+    setModalVisible(true);
+
+    try {
+      const contract = await contracts.deploy(params);
+      return contract;
+    } catch (error) {
+      setModalTitle('Deployment Error');
+      setModalMessage('Failed to deploy the contract.');
+      setModalVisible(true);
+      throw error;
+    } finally {
+      setModalVisible(false);
     }
-    const contract = await contracts.deploy(params)
-    return contract
+  };
+
+  const handleGenerate = async (imgUrl: string, address: string): Promise<any> => {
+    formData.ImageUrl = imgUrl
+
+    const collectionData = {
+      ...formData,
+      'address': address
+    }
+
+    const generate = await collectionFile.generate(collectionData)
+    if (typeof generate !== "string") {
+      return generate
+    } else {
+      alert(generate)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -108,10 +164,27 @@ const CollectionCreatorPage: React.FC = () => {
       
       const deploy = await handleDeploy(jsonHash)      
       console.log(deploy);
-    } catch (error) {
-      console.error('Error during submission:', error);
+
+      const generate = await handleGenerate(jsonHash, deploy)
+      if (generate){
+        setModalTitle('Success');
+        setModalMessage('Collection created successfully!');
+        setModalVisible(true);
+      }
+    } catch (error: any) {
+      setModalTitle('Create Collection Error');
+      setModalMessage(error.message);
+      setModalVisible(true);
     }
   };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+  };
+
+  useEffect(() => {
+    initBrowserFS().catch((err) => console.error('Failed to initialize BrowserFS', err));
+  }, []);
 
   return (
     <Container className="d-flex flex-column justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
@@ -215,6 +288,12 @@ const CollectionCreatorPage: React.FC = () => {
           Submit
         </Button>
       </Form>
+      <AlertModal
+        title={modalTitle}
+        message={modalMessage}
+        isVisible={isModalVisible}
+        onClose={handleCloseModal}
+      />
     </Container>
   );
 }

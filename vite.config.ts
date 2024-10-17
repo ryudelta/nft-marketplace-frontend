@@ -10,6 +10,7 @@ export default defineConfig({
        '@': path.resolve(__dirname, './src'),
        'store': path.resolve(__dirname, './src/store'),
        '@contracts': path.resolve(__dirname, './contract/nft/contracts'),
+       'process': 'process/browser',
     },
   },
   server: {
