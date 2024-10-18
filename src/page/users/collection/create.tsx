@@ -24,7 +24,8 @@ const CollectionCreatorPage: React.FC = () => {
     ContractSymbol: '',
     EndDate: null,
     NftType: null,
-    StartDate: null
+    StartDate: null,
+    address: ''
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -135,13 +136,9 @@ const CollectionCreatorPage: React.FC = () => {
 
   const handleGenerate = async (imgUrl: string, address: string): Promise<any> => {
     formData.ImageUrl = imgUrl
+    formData.address = address
 
-    const collectionData = {
-      ...formData,
-      'address': address
-    }
-
-    const generate = await collectionFile.generate(collectionData)
+    const generate = await collectionFile.generate(formData)
     if (typeof generate !== "string") {
       return generate
     } else {

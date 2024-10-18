@@ -23,4 +23,22 @@ const generateJson = async (path: string, filename: string, data: any): Promise<
   }
 };
 
-export { generateJson };
+const fetchJson = async(path: string, filename: string):  Promise<any> => {
+  try {
+    const response = await fetch(`api/json-data?path=${path}&filename=${filename}`, {
+      method: 'GET'
+    })
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    
+    const result = await response.json()
+    return result.data
+  } catch (error: any) {
+    console.log(`generate => `, error.message);
+    
+    return error
+  }
+}
+
+export { generateJson, fetchJson };

@@ -13,10 +13,28 @@ const app = express();
 const PORT = 5000;
 
 // Middleware setup
-app.use('/public', express.static(path.join(__dirname, 'public')));
-
 app.use(cors());
 app.use(bodyParser.json());
+
+app.get('/api/json-data', async (req, res) => {
+  const { path: folderPath, filename } = req.query;
+
+  const filePath = path.join(__dirname, `public/${folderPath}/${filename}`);
+
+  try {
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ message: 'File not found' });
+    }
+
+    const data = fs.readFileSync(filePath, 'utf-8');
+    const toJson = JSON.parse(data);
+
+    res.status(200).json({ data: toJson });
+  } catch (error) {
+    console.error('Error reading JSON file:', error);
+    res.status(500).json({ message: 'Failed to read JSON file' });
+  }
+});
 
 app.post('/api/rewrite-json', async (req, res) => {
   const { path: folderPath, filename, data } = req.body;
@@ -25,9 +43,7 @@ app.post('/api/rewrite-json', async (req, res) => {
   try {
     let existingData = [];
 
-    // Check if the file exists
     if (fs.existsSync(filePath)) {
-      // Read the existing data
       const fileContents = fs.readFileSync(filePath, 'utf-8');
       existingData = JSON.parse(fileContents); // Parse the existing data
     }

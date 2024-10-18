@@ -1,5 +1,6 @@
 import path from "path"
-import { generateJson } from "../../tools/generate-json"
+import { fetchJson, generateJson } from "../../tools/generate-json"
+import { Collections } from "./interface"
 
 const paths = `collections`
 const filename = `data.json`
@@ -14,6 +15,18 @@ const collectionFile = {
         }
         console.log(`generate => `, generate);
         return generate
+    },
+    fetch: async (): Promise<Collections[] | []> => {
+        try {
+            const response = await fetchJson(paths, filename)
+            const colResponse: [Collections] = response
+            if (colResponse.length <= 0) {
+                return []
+            }
+            return colResponse
+        } catch (error: any) {
+            return error
+        }
     }
 }
 
