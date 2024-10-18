@@ -1,11 +1,10 @@
 {
-    "settings": {
-      "import/resolver": {
-        "node": {
-          "paths": ["./node_modules"],
-          "extensions": [".js", ".jsx", ".ts", ".tsx"]
-        }
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "paths": ["./node_modules"],
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
       }
     }
   }
-  
+}

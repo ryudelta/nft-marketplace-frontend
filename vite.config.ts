@@ -19,6 +19,9 @@ export default defineConfig({
         overlay: true,
     },
     proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:5000'
+      },
       '/pinata': {
         target: 'https://api.pinata.cloud',
         changeOrigin: true,

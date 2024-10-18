@@ -1,17 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Col, Container, Form, Image, Row } from 'react-bootstrap';
 import { CFTCollection, Collections, mintSettings } from '../../../hooks/collection/interface';
 import { DateToIntTime, IntTimeToDate } from '../../../tools/date';
 import { pinataIpfs } from '../../../api/ipfs/pinata/pinata';
 import { contracts } from '../../../hooks/collection/contract';
-import useWallet from '../../../hooks/wallet/wallet';
 import { collectionFile } from '../../../hooks/collection/file';
 import AlertModal from '../../../component/modal/modal';
-import { initBrowserFS } from '../../../tools/generate-json';
 
 const CollectionCreatorPage: React.FC = () => {
-  const { walletAddress, signedMessage, connectWallet } = useWallet();
-
   const [typeCol, setTypeCol] = useState<string>("LaunchpadMinting");
   const [launch, setLaunch] = useState<boolean>(false);
   const [self, setSelf] = useState<boolean>(false);
@@ -181,10 +177,6 @@ const CollectionCreatorPage: React.FC = () => {
   const handleCloseModal = () => {
     setModalVisible(false);
   };
-
-  useEffect(() => {
-    initBrowserFS().catch((err) => console.error('Failed to initialize BrowserFS', err));
-  }, []);
 
   return (
     <Container className="d-flex flex-column justify-content-center align-items-center" style={{ minHeight: '100vh' }}>

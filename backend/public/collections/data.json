@@ -1,0 +1,22 @@
+[
+  {
+    "ImageUrl": "QmX3Z3aGWiA4yjgtDLC62aRotqPuYiZdVMGsLYmu99kLfV",
+    "CollectionType": "SelfMinting",
+    "ContractName": "EDF",
+    "ContractSymbol": "DEF",
+    "EndDate": null,
+    "NftType": null,
+    "StartDate": null,
+    "address": "0x1712d9E0AFdBF0165DA8a6A54daEbD3B417b35A0"
+  },
+  {
+    "ImageUrl": "QmX3Z3aGWiA4yjgtDLC62aRotqPuYiZdVMGsLYmu99kLfV",
+    "CollectionType": "SelfMinting",
+    "ContractName": "EDF",
+    "ContractSymbol": "DEF",
+    "EndDate": null,
+    "NftType": null,
+    "StartDate": null,
+    "address": "0x0Ba4e0Fb84A348f52632b6e63f395E4cB3dE02c4"
+  }
+]
