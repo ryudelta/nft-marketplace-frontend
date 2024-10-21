@@ -69,7 +69,7 @@ dependencies:
     specifier: ^18.3.1
     version: 18.3.1(react@18.3.1)
   react-router-dom:
-    specifier: ^6.26.2
+    specifier: ^6.27.0
     version: 6.27.0(react-dom@18.3.1)(react@18.3.1)
   react-scripts:
     specifier: 5.0.1

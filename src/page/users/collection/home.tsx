@@ -26,6 +26,10 @@ const CollectionPage: React.FC = () => {
     navigate('/collection/create');
   };
 
+  const goToNFTPage = (collectionAddress: string) => {
+    navigate(`/collection/nft/${collectionAddress}`);
+  };
+
   useEffect(() => {
     const fetchCollection = async () => {
       await handleFetchCollecionData()
@@ -57,7 +61,7 @@ const CollectionPage: React.FC = () => {
               <Card.Img variant="top" src="https://gateway.pinata.cloud/ipfs/QmTVg1kzR8owKJYEPLGnsut6K24gkArZEfpoYuYS6Lguva" alt={collection.ContractName} />
               <Card.Body>
                 <Card.Title>{collection.ContractSymbol} - {collection.ContractName}</Card.Title>
-                <Button variant="primary">View Details</Button>
+                <Button variant="primary" onClick={() => goToNFTPage(collection.address)}>View Details</Button>
               </Card.Body>
             </Card>
           </Col>
