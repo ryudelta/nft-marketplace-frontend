@@ -1,12 +1,20 @@
 import React from 'react';
 import { Button, Col, Container, Row, Tab, Tabs } from 'react-bootstrap';
 import './nft.css'; // Custom CSS for the page
+import NftTab from '../../../component/nft/nft';
+
+interface NftProps {
+    collectionAddress: string
+}
 
 
-const NftPage: React.FC = ({
+const NftPage: React.FC<NftProps> = ({
+    collectionAddress
 }) => {
-  const goToNftCreatePage = () => {
-    // Navigate to NFT creation page (implement routing logic here)
+    const path = window.location.pathname.split('/')
+    const address = path[path.length - 1];
+    
+    const goToNftCreatePage = () => {
     console.log('Navigating to NFT create page...');
   };
 
@@ -98,7 +106,7 @@ const NftPage: React.FC = ({
                 justify
             >
             <Tab eventKey="items" title="Items">
-                Items
+                <NftTab collectionAddress={address} />
             </Tab>
             <Tab eventKey="offers" title="Offers">
                 Offers

@@ -23,7 +23,7 @@ app.get('/api/json-data', async (req, res) => {
 
   try {
     if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ message: 'File not found' });
+      return res.status(200).json({ data: [] });
     }
 
     const data = fs.readFileSync(filePath, 'utf-8');

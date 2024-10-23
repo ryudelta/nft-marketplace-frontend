@@ -1,22 +1,12 @@
 [
   {
-    "ImageUrl": "QmX3Z3aGWiA4yjgtDLC62aRotqPuYiZdVMGsLYmu99kLfV",
+    "ImageUrl": "QmYHUu76uZKKidJpmRu99oozZ9UgBhZb7vwc3WGb9Dbhgo",
     "CollectionType": "SelfMinting",
-    "ContractName": "EDF",
-    "ContractSymbol": "DEF",
+    "ContractName": "DRF",
+    "ContractSymbol": "DRF",
     "EndDate": null,
     "NftType": null,
     "StartDate": null,
-    "address": "0x1712d9E0AFdBF0165DA8a6A54daEbD3B417b35A0"
-  },
-  {
-    "ImageUrl": "QmX3Z3aGWiA4yjgtDLC62aRotqPuYiZdVMGsLYmu99kLfV",
-    "CollectionType": "SelfMinting",
-    "ContractName": "EDF",
-    "ContractSymbol": "DEF",
-    "EndDate": null,
-    "NftType": null,
-    "StartDate": null,
-    "address": "0x0Ba4e0Fb84A348f52632b6e63f395E4cB3dE02c4"
+    "address": "0x6662d41623550f7d0fd61bB6C9C93765Ea63f227"
   }
 ]
