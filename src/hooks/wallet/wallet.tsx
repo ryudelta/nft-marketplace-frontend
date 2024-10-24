@@ -32,7 +32,6 @@ const useWallet = () => {
         return { address: null, message: '', signature: null };
       }
     } else {
-      // MetaMask not detected
       window.open('https://metamask.io/download.html', '_blank');
       return { address: null, message: '', signature: null };
     }

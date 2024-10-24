@@ -7,7 +7,7 @@ import useWallet from '../../hooks/wallet/wallet';
 const MyNavbar: React.FC = () => {
   const walletConfig = useWallet();
 
-  let { walletAddress } = useWallet();
+  const { walletAddress } = useWallet();
 
   const [expanded, setExpanded] = useState(false);
   const [wallet, setWallet] = useState<WalletConnection>({address: null, message: '', signature: ''});

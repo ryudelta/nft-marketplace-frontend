@@ -1,4 +1,3 @@
-import path from "path";
 import { CFTCollection, Collections } from "./interface";
 import CFT from "../../../contract/nft1155/artifacts/contracts/CFT.sol/ChefToken.json";
 import { ethers } from "ethers";
@@ -21,6 +20,8 @@ const contracts = {
         }
 
         const {abi, bytecode} = artifacts
+        data.initialOwner = await signer.getAddress()
+        
         try {
             const factory = new ethers.ContractFactory(abi, bytecode, signer)
 
@@ -32,6 +33,8 @@ const contracts = {
 
             return address;
         } catch (error: any) {
+            console.log(`deploy contract error ${error}`);
+            
             return error
         }
     }

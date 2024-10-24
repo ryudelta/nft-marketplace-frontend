@@ -17,6 +17,8 @@ contract ChefDropToken is ERC1155, Ownable, ERC1155Pausable, ERC1155Burnable, ER
     string public nftType;
 
     mapping(uint256 => string) private _tokenURIs;
+    uint256 private _currentTokenId;
+    uint256[] private _allTokenIds; 
 
     struct Collection {
         string name;
@@ -54,30 +56,35 @@ contract ChefDropToken is ERC1155, Ownable, ERC1155Pausable, ERC1155Burnable, ER
         _unpause();
     }
 
-    function mint(address account, uint256 id, uint256 amount, string memory tokenURI, bytes memory data) public onlyOwner {
+    function mint(address account, uint256 amount, string memory tokenURI, bytes memory data) public onlyOwner {
         require(block.timestamp >= startingDate, "Minting has not started yet");
         require(block.timestamp <= endDate, "Minting has ended");
         require(amount > 0, "Amount must be greater than zero");
-        _mint(account, id, amount, data);
-        _setTokenURI(id, tokenURI);
+        uint256 tokenId = _generateTokenId();
+        _mint(account, tokenId, amount, data);
+        _setTokenURI(tokenId, tokenURI);
     }
 
-    function publicMint(uint256 id, uint256 amount, string memory tokenURI, bytes memory data) public payable {
+    function publicMint(address to, uint256 amount, string memory tokenURI, bytes memory data) public payable {
         require(block.timestamp >= startingDate, "Minting has not started yet");
         require(block.timestamp <= endDate, "Minting has ended");
         require(amount > 0, "Amount must be greater than zero");
-        _mint(msg.sender, id, amount, data);
-        _setTokenURI(id, tokenURI);
+        uint256 tokenId = _generateTokenId();
+        _mint(to, tokenId, amount, data);
+        _setTokenURI(tokenId, tokenURI);
     }
 
     function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, string[] memory tokenURIs, bytes memory data) public onlyOwner {
         require(block.timestamp >= startingDate, "Minting has not started yet");
         require(block.timestamp <= endDate, "Minting has ended");
         require(ids.length == amounts.length && ids.length == tokenURIs.length, "Mismatched arrays");
-        _mintBatch(to, ids, amounts, data);
+        uint256[] memory tokenIds = new uint256[](amounts.length);
+
+       for (uint256 i = 0; i < amounts.length; i++) {
         
-        for (uint256 i = 0; i < ids.length; i++) {
-            _setTokenURI(ids[i], tokenURIs[i]);
+            tokenIds[i] = _generateTokenId();
+            _mint(to, tokenIds[i], amounts[i], data);
+            _setTokenURI(tokenIds[i], tokenURIs[i]);
         }
     }
 
@@ -88,6 +95,17 @@ contract ChefDropToken is ERC1155, Ownable, ERC1155Pausable, ERC1155Burnable, ER
 
     function uri(uint256 tokenId) public view override returns (string memory) {
         return _tokenURIs[tokenId];
+    }
+
+    function getAllTokenURIs() public view returns (uint256[] memory, string[] memory) {
+        uint256 length = _allTokenIds.length;
+        string[] memory uris = new string[](length);
+
+        for (uint256 i = 0; i < length; i++) {
+            uris[i] = _tokenURIs[_allTokenIds[i]];
+        }
+
+        return (_allTokenIds, uris);
     }
 
     function approveMarketplace(address marketplaceAddress, bool approved) public {
@@ -102,5 +120,9 @@ contract ChefDropToken is ERC1155, Ownable, ERC1155Pausable, ERC1155Burnable, ER
 
     function _update(address from, address to, uint256[] memory ids, uint256[] memory values) internal override(ERC1155, ERC1155Pausable, ERC1155Supply) {
         super._update(from, to, ids, values);
+    }
+
+    function _generateTokenId() internal returns (uint256) {
+        return ++_currentTokenId; // Increment and return new token ID
     }
 }

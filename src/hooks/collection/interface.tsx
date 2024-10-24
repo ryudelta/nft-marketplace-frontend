@@ -6,6 +6,7 @@ export interface Collections {
     NftType: string | null;
     StartDate: number | null;
     EndDate: number | null;
+    address: string | '';
 }
 
 export interface MintOptions {

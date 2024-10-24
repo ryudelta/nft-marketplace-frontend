@@ -13,6 +13,8 @@ contract ChefToken is ERC1155, Ownable, ERC1155Pausable, ERC1155Burnable, ERC115
     string public symbol;
 
     mapping(uint256 => string) private _tokenURIs;
+    uint256 private _currentTokenId;
+    uint256[] private _allTokenIds; 
 
     struct Collection {
         string name;
@@ -39,25 +41,40 @@ contract ChefToken is ERC1155, Ownable, ERC1155Pausable, ERC1155Burnable, ERC115
         _unpause();
     }
 
-    function mint(address account, uint256 id, uint256 amount, string memory tokenURI, bytes memory data)
+    function mint(address account, uint256 amount, string memory tokenURI, bytes memory data)
         public
         onlyOwner
     {
         require(amount > 0, "Amount must be greater than zero");
-        _mint(account, id, amount, data);
-        _setTokenURI(id, tokenURI);
+
+        uint256 tokenId = _generateTokenId();
+        _mint(account, tokenId, amount, data);
+        _setTokenURI(tokenId, tokenURI);
     }
 
-    function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, string[] memory tokenURIs, bytes memory data)
+    function getAllTokenURIs() public view returns (uint256[] memory, string[] memory) {
+        uint256 length = _allTokenIds.length;
+        string[] memory uris = new string[](length);
+
+        for (uint256 i = 0; i < length; i++) {
+            uris[i] = _tokenURIs[_allTokenIds[i]];
+        }
+
+        return (_allTokenIds, uris);
+    }
+
+    function mintBatch(address to, uint256[] memory amounts, string[] memory tokenURIs, bytes memory data)
         public
         onlyOwner
     {
-        require(ids.length == amounts.length && ids.length == tokenURIs.length, "Mismatched arrays");
-        _mintBatch(to, ids, amounts, data);
-        
-        // Set the URIs for each minted token
-        for (uint256 i = 0; i < ids.length; i++) {
-            _setTokenURI(ids[i], tokenURIs[i]);
+        require(amounts.length == tokenURIs.length, "Mismatched arrays");
+
+        uint256[] memory tokenIds = new uint256[](amounts.length);
+
+        for (uint256 i = 0; i < amounts.length; i++) {
+            tokenIds[i] = _generateTokenId();
+            _mint(to, tokenIds[i], amounts[i], data);
+            _setTokenURI(tokenIds[i], tokenURIs[i]);
         }
     }
 
@@ -85,5 +102,9 @@ contract ChefToken is ERC1155, Ownable, ERC1155Pausable, ERC1155Burnable, ERC115
         override(ERC1155, ERC1155Pausable, ERC1155Supply)
     {
         super._update(from, to, ids, values);
+    }
+
+    function _generateTokenId() internal returns (uint256) {
+        return ++_currentTokenId;
     }
 }
