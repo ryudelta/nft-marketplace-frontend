@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Container, Spinner } from "react-bootstrap";
 
 interface NftProps {
-    collectionAddress: string
+    collectionAddress: string | undefined
 }
 
 const NftTab: React.FC<NftProps> = ({ collectionAddress }) => {
